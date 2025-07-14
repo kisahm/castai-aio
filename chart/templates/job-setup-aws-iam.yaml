@@ -1,0 +1,59 @@
+{{- if and (eq (index .Values "castai-agent" "provider") "eks") (eq (index .Values "castai-cluster-controller" "enabled") true) }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-set-aws-iam
+  namespace: castai-agent
+  annotations:
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      containers:
+      - name: helper
+        image: {{.Values.helper.image.repository}}:{{.Values.helper.image.tag}}
+        command: ["/setup-aws-iam.sh"]
+        imagePullPolicy: Always
+        env:
+          - name: CASTAI_CLUSTER_ID
+            valueFrom:
+              secretKeyRef:
+                name: "{{.Values.global.apiKeySecretRef}}"
+                key: CLUSTER_ID
+          - name: CASTAI_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: "{{.Values.global.apiKeySecretRef}}"
+                key: API_KEY
+          - name: NAMESPACE
+            value: "castai-agent"
+          - name: CASTAI_API_URL
+            value: "{{.Values.global.apiUrl}}"
+          - name: REGION
+            value: "{{.Values.global.eks.region}}"
+          - name: ACCOUNT_NUMBER
+            value: "{{.Values.global.eks.accountNumber}}"
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: aws-credentials
+                key: AWS_ACCESS_KEY_ID
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aws-credentials
+                key: AWS_SECRET_ACCESS_KEY
+          - name: AWS_SESSION_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: aws-credentials
+                key: AWS_SESSION_TOKEN
+{{- if eq .Values.helper.debug true }}
+          - name: DEBUG
+            value: "true"
+{{- end }}
+      restartPolicy: Never
+      serviceAccountName: castai-aio-helper
+  backoffLimit: 4
+{{- end }}
