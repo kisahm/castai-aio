@@ -1,3 +1,4 @@
 kubeconfig*
 *test.yaml
 chart/charts
+chart/Chart.lock
