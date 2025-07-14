@@ -10,10 +10,10 @@ This helm chart acts are a single resource to get rid of handling X different he
 * castai-workload-autoscaler
 
 ## Supported provider
-[x] Anywhere
-[ ] AKS
-[x] EKS
-[ ] GKE
+- [x] Anywhere
+- [ ] AKS
+- [x] EKS
+- [ ] GKE
 
 ## How to deploy
 ```
