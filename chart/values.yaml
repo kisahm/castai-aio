@@ -43,7 +43,7 @@ castai-workload-autoscaler:
 
 castai-evictor:
   enabled: true
-  replicaCount: 0
+  replicaCount: 1
   apiKeySecretRef: "castai-aio"
   clusterIdSecretKeyRef: 
     name: "castai-aio"
@@ -65,7 +65,7 @@ castai-spot-handler:
 
 infrastructureAutoscaling:
   enabled: false
-  
+
 helper:
   image:
     repository: docker.io/kisahm/castai-aio-helper
